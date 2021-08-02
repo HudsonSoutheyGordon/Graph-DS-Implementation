@@ -171,6 +171,9 @@ class UndirectedGraph:
         """
         Return list of vertices visited during DFS search
         Vertices are picked in alphabetical order
+        If the starting vertex is not in the list, it will return an empty list.
+        If the ending vertex is not in the list, it performs the DFS
+        as if the end point is None.
         """
         if v_start not in self.get_vertices():
             return []
@@ -201,7 +204,33 @@ class UndirectedGraph:
         """
         Return list of vertices visited during BFS search
         Vertices are picked in alphabetical order
+        If the starting vertex is not in the list, it will return an empty list.
+        If the ending vertex is not in the list, it performs the BFS
+        as if the end point is None.
         """
+        if v_start not in self.get_vertices():
+            return []
+
+        v_visited = []
+        queue = deque()
+
+        queue.append(v_start)
+
+        while len(queue) != 0:
+            v = queue.popleft()
+            if v == v_end:
+                v_visited.append(v)
+                return v_visited
+
+            if v not in v_visited:      # If v hasn't been visited, push it to the stack, and
+                v_visited.append(v)     #    then push it's neighbours too (in alphabetical order)
+                adjacent = self.adj_list[v]
+                adjacent.sort()         # Ensure we explore in alphabetical order
+                for u in adjacent:
+                    if u not in v_visited:
+                        queue.append(u)
+
+        return v_visited
         
 
     def count_connected_components(self):
