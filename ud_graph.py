@@ -81,7 +81,9 @@ class UndirectedGraph:
         if u == v:                  # Loop cannot exist
             return
 
-        if u not in self.adj_list or v not in self.adj_list:  # If either vertex doesn't exist, return.
+        if u not in self.adj_list:  # If either vertex doesn't exist, return.
+            return
+        if v not in self.adj_list:
             return
 
         self.adj_list[u].remove(v)  # Add the relationships to our dictionary.
@@ -258,6 +260,11 @@ class UndirectedGraph:
         if len(vertices) < 3:
             return False
 
+        # When checking a graph for cycles, we need to check
+        # all components of the graph. Thus, we ensure we visit each
+        # vertex through our BFS, by doing a BFS on each component.
+        # If any component has a cycle, then the this method returns true
+
         while len(v_unvisited) > 0:
             has_cycle, visited = self.mod_bfs(v_unvisited[0])
             if has_cycle:
@@ -272,13 +279,13 @@ class UndirectedGraph:
 
     def mod_bfs(self, v_start):
         """
-        Modified BFS which returns
-        :param start:
-        :return:
+        Helper method for has_cycle.
+        Modified BFS which returns both the paths visited, but also if the
+        path we checked contained a cycle.
         """
         v_visited = []
         queue = deque()
-        prev_q = deque()
+        prev_q = deque()        # Maintain a queue, so we can track v's first ancestor
 
         queue.append(v_start)
         prev_val = None
@@ -292,14 +299,14 @@ class UndirectedGraph:
                 v_visited.append(v)
                 adjacent = list(self.adj_list[v])
                 if prev_val is not None and prev_val in adjacent:
-                    adjacent.remove(prev_val)
+                    adjacent.remove(prev_val)   # Remove the first ancestor from the list
                 adjacent.sort()
                 for u in adjacent:
                     if u not in v_visited:
                         queue.append(u)
                         prev_q.append(v)
-                    else:
-                        return True, None
+                    else:                       # If an adjacent node has been visited (and is not the ancestor)
+                        return True, None       #   Then we have found a cycle
 
 
         return False, v_visited
