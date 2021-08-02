@@ -81,9 +81,9 @@ class UndirectedGraph:
         if u == v:                  # Loop cannot exist
             return
 
-        if u not in self.adj_list:  # If either vertex doesn't exist, return.
+        if u not in self.adj_list or v not in self.adj_list:  # If either vertex doesn't exist, return.
             return
-        if v not in self.adj_list:
+        elif v not in self.adj_list[u] or u not in self.adj_list[v]:
             return
 
         self.adj_list[u].remove(v)  # Add the relationships to our dictionary.
