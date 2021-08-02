@@ -68,8 +68,10 @@ class UndirectedGraph:
         if v not in self.adj_list:
             self.add_vertex(v)
 
-        self.adj_list[u].append(v)  # Add the relationships to our dictionary.
-        self.adj_list[v].append(u)
+        if v not in self.adj_list[u]:
+            self.adj_list[u].append(v)  # Add the relationships to our dictionary.
+        if u not in self.adj_list[v]:
+            self.adj_list[v].append(u)
 
     def remove_edge(self, v: str, u: str) -> None:
         """
@@ -188,7 +190,7 @@ class UndirectedGraph:
                 v_visited.append(v)     #    then push it's neighbours too (in alphabetical order)
                 adjacent = self.adj_list[v]
                 adjacent.sort()
-                adjacent = adjacent[::-1]
+                adjacent = adjacent[::-1]       # Ensure we explore in alphabetical order
                 for u in adjacent:
                     stack.append(u)
 
