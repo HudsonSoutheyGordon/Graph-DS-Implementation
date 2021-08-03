@@ -80,7 +80,7 @@ class DirectedGraph:
         or src == dst, the method does nothing.
         If the edge already exists, this method updates its weight.
         """
-        if weight < 1 or src == dst:
+        if weight < 1 or src == dst or src < 0 or dst < 0:
             return
         elif len(self.adj_matrix) <= src or \
              len(self.adj_matrix) <= dst:    # Check to see if src or dst are not in the graph
@@ -96,8 +96,9 @@ class DirectedGraph:
         If either vertex does not exist,
         or the edge does not exist, the method does nothing.
         """
-
-        if len(self.adj_matrix) <= src or \
+        if src < 0 or dst < 0:
+            return
+        elif len(self.adj_matrix) <= src or \
            len(self.adj_matrix) <= dst:  # Check to see if src or dst are not in the graph
             return
 
@@ -194,6 +195,16 @@ if __name__ == '__main__':
              (3, 1, 5), (2, 1, 23), (3, 2, 7)]
     g = DirectedGraph(edges)
     print(g.get_edges(), g.get_vertices(), sep='\n')
+
+    print("\nMethod Remove Edge custom Test")
+    print("----------------------------------")
+    g = DirectedGraph()
+    edges = [(3, 1, 7), (7, 1, 5), (8, 2, 10), (6, 4, 10), (9, 10, 11),
+             (11, 10, 5), (12, 11, 20), (5, 12, 9)]
+
+    g = DirectedGraph(edges)
+    print(g)
+    g.remove_edge(5, -1)
 
     #
     # print("\nPDF - method is_valid_path() example 1")
