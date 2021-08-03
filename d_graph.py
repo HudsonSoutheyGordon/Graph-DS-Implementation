@@ -234,10 +234,40 @@ class DirectedGraph:
         """
         TODO: Write this implementation
         """
+        v_unvisited = self.get_vertices()
+        vertices = self.get_vertices()
+
+        if len(vertices) < 3:
+            return False
+
+        # When checking a graph for cycles, we need to check
+        # all components of the graph. Thus, we ensure we visit each
+        # vertex through our BFS, by doing a BFS on each component.
+        # If any component has a cycle, then the this method returns true
+
+        while len(v_unvisited) > 0:
+            has_cycle, visited = self.mod_dfs(v_unvisited[0])
+            if has_cycle:
+                return True
+            for v in visited:
+                if v in v_unvisited:
+                    v_unvisited.remove(v)
+
+
+
+        return False
+
+
+    def mod_dfs(self, v_start):
+        """
+        Helper method for has_cycle.
+        Modified DFS which returns both the paths visited, but also if the
+        path we checked contained a cycle.
+        """
         if len(self.adj_matrix) < 3:
             return False
 
-        v_start = 0
+        v_start = v_start
 
         v_visited = []
         stack = deque()
@@ -267,51 +297,13 @@ class DirectedGraph:
                     backTracking = False
                     for u in adjacent_vs:
                         if u in current_traversal:
-                            return True
+                            return True, None
                         stack.append(u)
                         current_traversal.append(u)
                 else:
                     current_traversal.pop()
-                    backTracking = True
+                    backTracking = True, None
 
-
-        return False
-
-    def mod_bfs(self, v_start, visited=None):
-        """
-        Helper method for has_cycle.
-        Modified BFS which returns both the paths visited, but also if the
-        path we checked contained a cycle.
-        """
-        # With a directed graph we can hit dead ends without seeing the whole graph.
-        # Thus we need to maintain a list of where we have already been while checking for cycles
-        # and ignore those vertices in subsequent checks. I.e. we're only interested in new vertices
-        if visited is None:
-            prev_visited = []
-        else:
-            prev_visited = visited
-
-        v_visited = []
-
-        queue = deque()
-
-        queue.append(v_start)
-
-        while len(queue) != 0:
-            v = queue.popleft()
-
-            if v not in v_visited:
-                v_visited.append(v)
-                adjacent = self.adj_matrix[v]
-                adjacent_vs = [x for x in range(len(adjacent)) if adjacent[x] != 0]
-                adjacent_vs.sort()
-                for u in adjacent_vs:
-                    if u in prev_visited:     # Ignore it if we've seen it before
-                        continue
-                    if u not in v_visited:
-                        queue.append(u)
-                    else:                     # If an adjacent node has been visited (and is not the ancestor)
-                        return True, None       #   Then we have found a cycle
 
         return False, v_visited
 
