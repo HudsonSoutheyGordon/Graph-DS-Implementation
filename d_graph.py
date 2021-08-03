@@ -232,7 +232,12 @@ class DirectedGraph:
 
     def has_cycle(self):
         """
-        TODO: Write this implementation
+        Uses helper method mod_dfs.
+        Investigates paths of the graph, keeping track of the current traversal.
+        If the dfs re-encounters a vertex that is in the current traversal, then
+        we have found a cycle.
+        Additionally, ensures every vertex has been visited to ensure this works
+        with disjointed graphs.
         """
         v_unvisited = self.get_vertices()
         vertices = self.get_vertices()
@@ -282,7 +287,7 @@ class DirectedGraph:
             v = tup[0]
             predecessor = tup[1]
             if backTracking:
-                while current_traversal[-1] != predecessor:
+                while current_traversal[-1] != predecessor:     # Backtrack to the last junction
                     current_traversal.pop()
 
             if v not in current_traversal:
@@ -301,13 +306,13 @@ class DirectedGraph:
                     for u in adjacent_vs:
                         if u in current_traversal:
                             return True, None
-                        stack.append((u, v))
+                        stack.append((u, v))    # Store the node AND it's predecessor. Need to know for backtracking
 
 
-                else:
+                else:   # If we hit a dead end, start backtracking
                     current_traversal.pop()
                     backTracking = True
-            else:
+            else:   # If we hit a dead end of a vertex we've visited, start backtracking
                 current_traversal.pop()
                 backTracking = True
 
@@ -318,7 +323,35 @@ class DirectedGraph:
         """
         TODO: Write this implementation
         """
-        pass
+        v_visited = {}  # Key = vertex : Value = min distance to vertex
+        pq = []    # Initialize priority queue
+        heapq.heappush(pq, (0, src))    # Values are pushed as tuples (priority/distance, vertex)
+
+        while len(pq) != 0:
+            tup = heapq.heappop(pq)
+            d = tup[0]
+            v = tup[1]
+            if v not in v_visited:
+                v_visited[v] = d
+
+                adjacent = self.adj_matrix[v]
+                adjacent_vs = [x for x in range(len(adjacent)) if adjacent[x] != 0]
+                adjacent_vs.sort()
+                for direct_successor in adjacent_vs:
+                    d_i = adjacent[direct_successor]    # get the distance val of the edge
+                    cumulative_d = d + d_i              # Cumulative distance is the distance to v + distance of edge
+                    heapq.heappush(pq, (cumulative_d, direct_successor))
+
+        cumulative_distances = [float('inf') for x in range(len(self.get_vertices()))]
+        for vertex in v_visited:
+            cumulative_distances[vertex] = v_visited[vertex]
+
+        return cumulative_distances
+
+
+
+
+
 
 
 if __name__ == '__main__':
@@ -412,14 +445,14 @@ if __name__ == '__main__':
     print('\n', g)
 
 
-    # print("\nPDF - dijkstra() example 1")
-    # print("--------------------------")
-    # edges = [(0, 1, 10), (4, 0, 12), (1, 4, 15), (4, 3, 3),
-    #          (3, 1, 5), (2, 1, 23), (3, 2, 7)]
-    # g = DirectedGraph(edges)
-    # for i in range(5):
-    #     print(f'DIJKSTRA {i} {g.dijkstra(i)}')
-    # g.remove_edge(4, 3)
-    # print('\n', g)
-    # for i in range(5):
-    #     print(f'DIJKSTRA {i} {g.dijkstra(i)}')
+    print("\nPDF - dijkstra() example 1")
+    print("--------------------------")
+    edges = [(0, 1, 10), (4, 0, 12), (1, 4, 15), (4, 3, 3),
+             (3, 1, 5), (2, 1, 23), (3, 2, 7)]
+    g = DirectedGraph(edges)
+    for i in range(5):
+        print(f'DIJKSTRA {i} {g.dijkstra(i)}')
+    g.remove_edge(4, 3)
+    print('\n', g)
+    for i in range(5):
+        print(f'DIJKSTRA {i} {g.dijkstra(i)}')
