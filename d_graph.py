@@ -162,15 +162,73 @@ class DirectedGraph:
 
     def dfs(self, v_start, v_end=None) -> []:
         """
-        TODO: Write this implementation
+        Return list of vertices visited during DFS search
+        Vertices are picked in ascending numerical order
+        If the starting vertex is not in the list, it will return an empty list.
+        If the ending vertex is not in the list, it performs the DFS
+        as if the end point is None.
         """
-        pass
+        if v_start not in self.get_vertices():  # Check to see if the first vertex is in the graph
+            return []
+
+        v_visited = []
+        stack = deque()
+
+        stack.append(v_start)
+
+        while len(stack) != 0:
+            v = stack.pop()
+            if v == v_end:
+                v_visited.append(v)
+                return v_visited
+
+            if v not in v_visited:  # If v hasn't been visited, push it to the stack, and
+                v_visited.append(v)  # then push it's neighbours too (in ascending order)
+                adjacent = self.adj_matrix[v]
+                # Edges are represented as weight values, but we care about the destination vertex.
+                # So we convert our list to be one of the connected destinations rather than weights.
+                adjacent_vs = [x for x in range(len(adjacent)) if adjacent[x] != 0]
+                adjacent_vs.sort()
+                adjacent_vs = adjacent_vs[::-1]  # Ensure we explore in ascending numerical order
+                for u in adjacent_vs:
+                    stack.append(u)
+
+        return v_visited
 
     def bfs(self, v_start, v_end=None) -> []:
         """
-        TODO: Write this implementation
+        Return list of vertices visited during DFS search
+        Vertices are picked in alphabetical order
+        If the starting vertex is not in the list, it will return an empty list.
+        If the ending vertex is not in the list, it performs the BFS
+        as if the end point is None.
         """
-        pass
+        if v_start not in self.get_vertices():  # Check to see if the first vertex is in the graph
+            return []
+
+        v_visited = []
+        queue = deque()
+
+        queue.append(v_start)
+
+        while len(queue) != 0:
+            v = queue.popleft()
+            if v == v_end:
+                v_visited.append(v)
+                return v_visited
+
+            if v not in v_visited:  # If v hasn't been visited, push it to the stack, and
+                v_visited.append(v)  # then push it's neighbours too (in ascending order)
+                adjacent = self.adj_matrix[v]
+                # Edges are represented as weight values, but we care about the destination vertex.
+                # So we convert our list to be one of the connected destinations rather than weights.
+                adjacent_vs = [x for x in range(len(adjacent)) if adjacent[x] != 0]
+                adjacent_vs.sort()
+                for u in adjacent_vs:
+                    if u not in v_visited:
+                        queue.append(u)
+
+        return v_visited
 
     def has_cycle(self):
         """
@@ -232,13 +290,13 @@ if __name__ == '__main__':
         print(path, g.is_valid_path(path))
     #
     #
-    # print("\nPDF - method dfs() and bfs() example 1")
-    # print("--------------------------------------")
-    # edges = [(0, 1, 10), (4, 0, 12), (1, 4, 15), (4, 3, 3),
-    #          (3, 1, 5), (2, 1, 23), (3, 2, 7)]
-    # g = DirectedGraph(edges)
-    # for start in range(5):
-    #     print(f'{start} DFS:{g.dfs(start)} BFS:{g.bfs(start)}')
+    print("\nPDF - method dfs() and bfs() example 1")
+    print("--------------------------------------")
+    edges = [(0, 1, 10), (4, 0, 12), (1, 4, 15), (4, 3, 3),
+             (3, 1, 5), (2, 1, 23), (3, 2, 7)]
+    g = DirectedGraph(edges)
+    for start in range(5):
+        print(f'{start} DFS:{g.dfs(start)} BFS:{g.bfs(start)}')
     #
     #
     # print("\nPDF - method has_cycle() example 1")
