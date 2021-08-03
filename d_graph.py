@@ -234,7 +234,86 @@ class DirectedGraph:
         """
         TODO: Write this implementation
         """
-        pass
+        if len(self.adj_matrix) < 3:
+            return False
+
+        v_start = 0
+
+        v_visited = []
+        stack = deque()
+        current_traversal = deque()
+        backTracking = False
+
+        stack.append(v_start)
+        current_traversal.append(v_start)
+
+        while len(stack) != 0:
+            if not backTracking:
+                v = stack.pop()
+            else:
+                v = current_traversal[-1]
+                if v in v_visited:
+                    v_visited.remove(v)
+
+            if v not in v_visited:
+                v_visited.append(v)
+                adjacent = self.adj_matrix[v]
+                # Edges are represented as weight values, but we care about the destination vertex.
+                # So we convert our list to be one of the connected destinations rather than weights.
+                adjacent_vs = [x for x in range(len(adjacent)) if adjacent[x] != 0]
+                adjacent_vs.sort()
+                adjacent_vs = adjacent_vs[::-1]  # Ensure we explore in ascending numerical order
+                if len(adjacent_vs) != 0:
+                    backTracking = False
+                    for u in adjacent_vs:
+                        if u in current_traversal:
+                            return True
+                        stack.append(u)
+                        current_traversal.append(u)
+                else:
+                    current_traversal.pop()
+                    backTracking = True
+
+
+        return False
+
+    def mod_bfs(self, v_start, visited=None):
+        """
+        Helper method for has_cycle.
+        Modified BFS which returns both the paths visited, but also if the
+        path we checked contained a cycle.
+        """
+        # With a directed graph we can hit dead ends without seeing the whole graph.
+        # Thus we need to maintain a list of where we have already been while checking for cycles
+        # and ignore those vertices in subsequent checks. I.e. we're only interested in new vertices
+        if visited is None:
+            prev_visited = []
+        else:
+            prev_visited = visited
+
+        v_visited = []
+
+        queue = deque()
+
+        queue.append(v_start)
+
+        while len(queue) != 0:
+            v = queue.popleft()
+
+            if v not in v_visited:
+                v_visited.append(v)
+                adjacent = self.adj_matrix[v]
+                adjacent_vs = [x for x in range(len(adjacent)) if adjacent[x] != 0]
+                adjacent_vs.sort()
+                for u in adjacent_vs:
+                    if u in prev_visited:     # Ignore it if we've seen it before
+                        continue
+                    if u not in v_visited:
+                        queue.append(u)
+                    else:                     # If an adjacent node has been visited (and is not the ancestor)
+                        return True, None       #   Then we have found a cycle
+
+        return False, v_visited
 
     def dijkstra(self, src: int) -> []:
         """
@@ -297,26 +376,29 @@ if __name__ == '__main__':
     g = DirectedGraph(edges)
     for start in range(5):
         print(f'{start} DFS:{g.dfs(start)} BFS:{g.bfs(start)}')
-    #
-    #
-    # print("\nPDF - method has_cycle() example 1")
-    # print("----------------------------------")
-    # edges = [(0, 1, 10), (4, 0, 12), (1, 4, 15), (4, 3, 3),
-    #          (3, 1, 5), (2, 1, 23), (3, 2, 7)]
-    # g = DirectedGraph(edges)
-    #
-    # edges_to_remove = [(3, 1), (4, 0), (3, 2)]
-    # for src, dst in edges_to_remove:
-    #     g.remove_edge(src, dst)
-    #     print(g.get_edges(), g.has_cycle(), sep='\n')
-    #
-    # edges_to_add = [(4, 3), (2, 3), (1, 3), (4, 0)]
-    # for src, dst in edges_to_add:
-    #     g.add_edge(src, dst)
-    #     print(g.get_edges(), g.has_cycle(), sep='\n')
-    # print('\n', g)
-    #
-    #
+
+
+    print("\nPDF - method has_cycle() example 1")
+    print("----------------------------------")
+    edges = [(0, 1, 10), (4, 0, 12), (1, 4, 15), (4, 3, 3),
+             (3, 1, 5), (2, 1, 23), (3, 2, 7)]
+    g = DirectedGraph(edges)
+
+    edges_to_remove = [(3, 1), (4, 0), (3, 2)]
+    for src, dst in edges_to_remove:
+        g.remove_edge(src, dst)
+        print(g.get_edges(), g.has_cycle(), sep='\n')
+
+    print("\nPDF - CUSTOM has_cycle())")
+    print("----------------------------------")
+    edges = [(0, 1, 10), (1, 3, 10), (1, 4, 10), (2, 1, 10), (2, 3, 10), (3, 7, 10),
+             (3, 6, 10), (4, 3, 10), (4, 0, 10)]
+
+    g = DirectedGraph(edges)
+    print(g.has_cycle())
+    print('\n', g)
+
+
     # print("\nPDF - dijkstra() example 1")
     # print("--------------------------")
     # edges = [(0, 1, 10), (4, 0, 12), (1, 4, 15), (4, 3, 3),
