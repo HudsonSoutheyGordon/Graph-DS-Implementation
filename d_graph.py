@@ -280,6 +280,7 @@ class DirectedGraph:
         while len(stack) != 0:
             if not backTracking:
                 v = stack.pop()
+                current_traversal.append(v)
             else:
                 v = current_traversal[-1]
                 if v in v_visited:
@@ -298,11 +299,12 @@ class DirectedGraph:
                     for u in adjacent_vs:
                         if u in current_traversal:
                             return True, None
-                        stack.append(u)
-                        current_traversal.append(u)
+                        if u not in v_visited and u not in stack:
+                            stack.append(u)
+
                 else:
                     current_traversal.pop()
-                    backTracking = True, None
+                    backTracking = True
 
 
         return False, v_visited
@@ -375,11 +377,15 @@ if __name__ == '__main__':
     edges = [(0, 1, 10), (4, 0, 12), (1, 4, 15), (4, 3, 3),
              (3, 1, 5), (2, 1, 23), (3, 2, 7)]
     g = DirectedGraph(edges)
-
     edges_to_remove = [(3, 1), (4, 0), (3, 2)]
     for src, dst in edges_to_remove:
         g.remove_edge(src, dst)
         print(g.get_edges(), g.has_cycle(), sep='\n')
+    edges_to_add = [(4, 3), (2, 3), (1, 3), (4, 0, 99)]
+    for src, dst, *weight in edges_to_add:
+        g.add_edge(src, dst, *weight)
+        print(g.get_edges(), g.has_cycle(), sep='\n')
+    print('\n', g)
 
     print("\nPDF - CUSTOM has_cycle())")
     print("----------------------------------")
