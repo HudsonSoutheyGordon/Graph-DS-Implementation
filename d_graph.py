@@ -278,13 +278,16 @@ class DirectedGraph:
         current_traversal.append(v_start)
 
         while len(stack) != 0:
-            if not backTracking:
-                v = stack.pop()
+            # if not backTracking:
+            #     v = stack.pop()
+            #     current_traversal.append(v)
+            # else:
+            #     v = current_traversal[-1]
+            #     if v in v_visited:
+            #         v_visited.remove(v)
+            v = stack.pop()
+            if v not in current_traversal:
                 current_traversal.append(v)
-            else:
-                v = current_traversal[-1]
-                if v in v_visited:
-                    v_visited.remove(v)
 
             if v not in v_visited:
                 v_visited.append(v)
