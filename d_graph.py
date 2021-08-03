@@ -274,7 +274,7 @@ class DirectedGraph:
         current_traversal = deque()
         backTracking = False
 
-        stack.append(v_start)
+        stack.append((v_start, None))
         current_traversal.append(v_start)
 
         while len(stack) != 0:
@@ -285,7 +285,13 @@ class DirectedGraph:
             #     v = current_traversal[-1]
             #     if v in v_visited:
             #         v_visited.remove(v)
-            v = stack.pop()
+            tup = stack.pop()
+            v = tup[0]
+            predecessor = tup[1]
+            if backTracking:
+                while current_traversal[-1] != predecessor:
+                    current_traversal.pop()
+
             if v not in current_traversal:
                 current_traversal.append(v)
 
@@ -302,8 +308,14 @@ class DirectedGraph:
                     for u in adjacent_vs:
                         if u in current_traversal:
                             return True, None
-                        if u not in v_visited and u not in stack:
-                            stack.append(u)
+                        # if u not in v_visited and u not in stack:
+                        #     stack.append(u)
+                        stack.append((u, v))
+                        # elif u in stack:
+                        #     current_traversal.pop()
+                        #     backTracking = True
+                        # Not sure I can just do the above.
+                        # Do we just put it in the stack twice? I think maybe
 
                 else:
                     current_traversal.pop()
@@ -392,8 +404,9 @@ if __name__ == '__main__':
 
     print("\nPDF - CUSTOM has_cycle())")
     print("----------------------------------")
-    edges = [(0, 1, 10), (1, 3, 10), (1, 4, 10), (2, 1, 10), (2, 3, 10), (3, 7, 10),
-             (3, 6, 10), (4, 3, 10), (4, 0, 10)]
+    edges = [(1, 0, 10), (1, 3, 10), (1, 7, 10), (3, 7, 10), (4, 5, 10), (5, 11, 10),
+             (5, 1, 10), (8, 4, 10), (8, 5, 10), (10, 7, 10), (10, 5, 10),
+             (11, 0, 10), (11, 3, 10)]
 
     g = DirectedGraph(edges)
     print(g.has_cycle())
