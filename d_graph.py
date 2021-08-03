@@ -1,7 +1,7 @@
 # Course: CS261 - Data Structures
-# Author:
-# Assignment:
-# Description:
+# Author: Hudson Southey-Gordon ONID: southeyh
+# Assignment: 6 - Directed Graphs
+# Description: Directed graph class and associated methods.
 
 import heapq
 from collections import deque
@@ -321,7 +321,9 @@ class DirectedGraph:
 
     def dijkstra(self, src: int) -> []:
         """
-        TODO: Write this implementation
+        Implements Dijkstra's algorithm via hash map and priority queue.
+        Returns a list of minimum distances for each vertex from the src vertex.
+        Unreachable vertices have a distance of infinity.
         """
         v_visited = {}  # Key = vertex : Value = min distance to vertex
         pq = []    # Initialize priority queue
@@ -332,17 +334,17 @@ class DirectedGraph:
             d = tup[0]
             v = tup[1]
             if v not in v_visited:
-                v_visited[v] = d
+                v_visited[v] = d        # Add it to the dictionary
 
                 adjacent = self.adj_matrix[v]
                 adjacent_vs = [x for x in range(len(adjacent)) if adjacent[x] != 0]
-                adjacent_vs.sort()
+                adjacent_vs.sort()      # Get the adjacent vertexes
                 for direct_successor in adjacent_vs:
                     d_i = adjacent[direct_successor]    # get the distance val of the edge
                     cumulative_d = d + d_i              # Cumulative distance is the distance to v + distance of edge
                     heapq.heappush(pq, (cumulative_d, direct_successor))
 
-        cumulative_distances = [float('inf') for x in range(len(self.get_vertices()))]
+        cumulative_distances = [float('inf') for x in range(len(self.get_vertices()))]  # Initialize all vertices as inf
         for vertex in v_visited:
             cumulative_distances[vertex] = v_visited[vertex]
 

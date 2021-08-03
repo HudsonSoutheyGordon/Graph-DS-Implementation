@@ -1,7 +1,7 @@
-# Course: 
-# Author: 
-# Assignment: 
-# Description:
+# Course: CS261 - Data Structures
+# Author: Hudson Southey-Gordon ONID: southeyh
+# Assignment: 6 - undirected Graphs
+# Description: undirected graph class and associated methods.
 
 from collections import deque
 
