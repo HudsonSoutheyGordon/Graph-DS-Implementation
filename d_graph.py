@@ -278,13 +278,6 @@ class DirectedGraph:
         current_traversal.append(v_start)
 
         while len(stack) != 0:
-            # if not backTracking:
-            #     v = stack.pop()
-            #     current_traversal.append(v)
-            # else:
-            #     v = current_traversal[-1]
-            #     if v in v_visited:
-            #         v_visited.remove(v)
             tup = stack.pop()
             v = tup[0]
             predecessor = tup[1]
@@ -308,18 +301,15 @@ class DirectedGraph:
                     for u in adjacent_vs:
                         if u in current_traversal:
                             return True, None
-                        # if u not in v_visited and u not in stack:
-                        #     stack.append(u)
                         stack.append((u, v))
-                        # elif u in stack:
-                        #     current_traversal.pop()
-                        #     backTracking = True
-                        # Not sure I can just do the above.
-                        # Do we just put it in the stack twice? I think maybe
+
 
                 else:
                     current_traversal.pop()
                     backTracking = True
+            else:
+                current_traversal.pop()
+                backTracking = True
 
 
         return False, v_visited
@@ -407,6 +397,15 @@ if __name__ == '__main__':
     edges = [(1, 0, 10), (1, 3, 10), (1, 7, 10), (3, 7, 10), (4, 5, 10), (5, 11, 10),
              (5, 1, 10), (8, 4, 10), (8, 5, 10), (10, 7, 10), (10, 5, 10),
              (11, 0, 10), (11, 3, 10)]
+
+    g = DirectedGraph(edges)
+    print(g.has_cycle())
+    print('\n', g)
+
+    print("\nPDF - CUSTOM 2 has_cycle())")
+    print("----------------------------------")
+    edges = [(1, 2, 10), (4, 1, 10), (5, 10, 10), (10, 4, 10), (6, 4, 10), (6, 5, 10),
+             (8, 5, 10), (8, 0, 10), (11, 2, 10), (11, 5, 10), (11, 8, 10)]
 
     g = DirectedGraph(edges)
     print(g.has_cycle())
