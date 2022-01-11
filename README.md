@@ -8,8 +8,8 @@ Undirected Graph
 ---
 The undirected, unweighted graph is represented as an adjacency list.
 Methods:
-..* Add/Remove vertex
-..* Check path validity
+* Add/Remove vertex
+* Check path validity
 ..* Depth-First Search
 ..* Breadth-First Search
 ..* Count connected components
